@@ -1,53 +1,55 @@
+name: Update and Commit Feed Cache
+
 on:
   schedule:
     - cron: '7 0-3 * * *'
-  workflow_dispatch:  # Allows the workflow to be triggered manually
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  update-cache:
+  update_cache:
     runs-on: ubuntu-latest
-
-    env:
-      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      RSS_FEED_URL: ${{ secrets.RSS_FEED_URL }}
-      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      with:
-        ref: main
-        persist-credentials: false
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.12
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install requests feedparser beautifulsoup4
 
-    - name: Run RSS to Telegram Script
-      run: python send_rss_to_telegram.py
+    - name: Run Python script
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        RSS_FEED_URL: ${{ secrets.RSS_FEED_URL }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        python send_rss_to_telegram.py
 
     - name: Configure Git
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
 
     - name: Pull latest changes
       run: git pull --rebase origin main
 
-    - name: Commit and Push if Changes
+    - name: Commit changes
       run: |
         if [[ `git status --porcelain` ]]; then
           git add feed_cache.json
           git commit -m "Update and Commit Feed Cache"
-          git pull --rebase origin main  # Pull latest changes and rebase
           git push origin main
+        else
+          echo "No changes to commit"
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
