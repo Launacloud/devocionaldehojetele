@@ -38,7 +38,7 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
     - name: Pull latest changes
-      run: git pull origin main
+      run: git pull --rebase origin main
 
     - name: Commit and Push if Changes
       run: |
