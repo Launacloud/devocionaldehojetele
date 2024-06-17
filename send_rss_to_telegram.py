@@ -1,8 +1,8 @@
-from bs4 import BeautifulSoup
 import os
+import json
 import requests
 import feedparser
-import json
+from bs4 import BeautifulSoup
 
 # Load environment variables
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
