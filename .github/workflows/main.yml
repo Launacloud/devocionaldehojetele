@@ -39,8 +39,21 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
 
-    - name: Pull latest changes
-      run: git pull --rebase origin main
+    - name: Stash unstaged changes (if any)
+      run: |
+        if [[ `git status --porcelain` ]]; then
+          git stash --include-untracked
+        fi
+
+    - name: Pull latest changes with rebase
+      run: |
+        git pull --rebase origin main
+
+    - name: Apply stashed changes (if any)
+      run: |
+        if git stash list | grep -q 'stash@{0}'; then
+          git stash pop
+        fi
 
     - name: Commit changes
       run: |
