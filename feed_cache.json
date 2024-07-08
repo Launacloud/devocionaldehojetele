@@ -1,7 +1,7 @@
 {
-    "etag": "W/\"a04db954fab79bd4a14f0bc8fc2e9cb0374d924a30a0b7a6b664cafdda991e0a\"",
+    "etag": "W/\"d7e94643e1fa4779719b0e78f8bd0c1b6cb84df9b7a80cd38860b049e827a179\"",
     "modified": "",
-    "last_entry_id": "https://www.bibliaon.com/esportivo/",
+    "last_entry_id": "https://www.bibliaon.com/devocional_diario/",
     "https://www.bibliaon.com/planos_de_leitura_da_biblia/": true,
     "https://www.bibliaon.com/salmos_de_gratidao_ao_criador/": true,
     "https://www.bibliaon.com/como_mostrar_sua_gratidao_a_deus/": true,
@@ -23,5 +23,6 @@
     "https://www.bibliaon.com/amar_o_proximo_como_a_ti_mesmo_explicacao_do_mandamento/": true,
     "https://www.bibliaon.com/trabalho/": true,
     "https://www.bibliaon.com/mensagem_de_fe_em_deus/": true,
-    "https://www.bibliaon.com/esportivo/": true
+    "https://www.bibliaon.com/esportivo/": true,
+    "https://www.bibliaon.com/devocional_diario/": true
 }
