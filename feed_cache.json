@@ -1,7 +1,7 @@
 {
-    "etag": "W/\"92552e165f7b324fa9ee7252000c2f3dc482bd647c4ebb038452cabd039e90e0\"",
+    "etag": "W/\"8615852ca9116d5bde2f7970517a6acba2cd57ae6ff8e9286c9cebeb1aeaeac9\"",
     "modified": "",
-    "last_entry_id": "https://www.bibliaon.com/vida_nova/",
+    "last_entry_id": "https://www.bibliaon.com/justica_de_deus/",
     "https://www.bibliaon.com/planos_de_leitura_da_biblia/": true,
     "https://www.bibliaon.com/salmos_de_gratidao_ao_criador/": true,
     "https://www.bibliaon.com/como_mostrar_sua_gratidao_a_deus/": true,
@@ -30,5 +30,7 @@
     "https://www.bibliaon.com/emprestar_dinheiro_juros/": true,
     "https://www.bibliaon.com/conselhos_financeiros/": true,
     "https://www.bibliaon.com/salmo_37_seja_abencoado/": true,
-    "https://www.bibliaon.com/vida_nova/": true
+    "https://www.bibliaon.com/vida_nova/": true,
+    "https://www.bibliaon.com/justica_de_deus/": true,
+    "https://www.bibliaon.com/provas_do_amor_de_deus/": true
 }
