@@ -1,7 +1,7 @@
 {
-    "etag": "W/\"8174e54579de39098b74ab7dd8b2f50f21c5c39324d90c634d161cc4b16c0937\"",
+    "etag": "W/\"b9786ea87f514e99c076071e121b1b2042b201664304c85092f4fc489c1f26a7\"",
     "modified": "",
-    "last_entry_id": "https://www.bibliaon.com/visao/",
+    "last_entry_id": "https://www.bibliaon.com/versiculos_da_protecao_de_deus/",
     "https://www.bibliaon.com/planos_de_leitura_da_biblia/": true,
     "https://www.bibliaon.com/salmos_de_gratidao_ao_criador/": true,
     "https://www.bibliaon.com/como_mostrar_sua_gratidao_a_deus/": true,
@@ -93,5 +93,6 @@
     "https://www.bibliaon.com/estudos_biblicos/": true,
     "https://www.bibliaon.com/salmo_27_protecao_de_deus/": true,
     "https://www.bibliaon.com/palavra_do_dia/": true,
-    "https://www.bibliaon.com/versiculo_do_dia/": true
+    "https://www.bibliaon.com/versiculo_do_dia/": true,
+    "https://www.bibliaon.com/mensagens_de_deus/": true
 }
