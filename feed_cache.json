@@ -1,7 +1,7 @@
 {
-    "etag": "W/\"9d371229ca19a759446bd738ca4014385cc049d8ee2f030a76abdaacfdb01558\"",
+    "etag": "W/\"9bc836ef73200cd2cbf6028174d4363f01460de226e416c878f6f244f7d0c15b\"",
     "modified": "",
-    "last_entry_id": "https://www.bibliaon.com/historia/",
+    "last_entry_id": "https://www.bibliaon.com/frases_de_boa_noite_com_deus/",
     "https://www.bibliaon.com/planos_de_leitura_da_biblia/": true,
     "https://www.bibliaon.com/salmos_de_gratidao_ao_criador/": true,
     "https://www.bibliaon.com/como_mostrar_sua_gratidao_a_deus/": true,
@@ -95,5 +95,7 @@
     "https://www.bibliaon.com/palavra_do_dia/": true,
     "https://www.bibliaon.com/versiculo_do_dia/": true,
     "https://www.bibliaon.com/mensagens_de_deus/": true,
-    "https://www.bibliaon.com/oracao_da_noite/": true
+    "https://www.bibliaon.com/oracao_da_noite/": true,
+    "https://www.bibliaon.com/versiculos_para_comecar_bem_o_dia/": true,
+    "https://www.bibliaon.com/paz/": true
 }
