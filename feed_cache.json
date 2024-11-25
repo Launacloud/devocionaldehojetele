@@ -1,7 +1,7 @@
 {
-    "etag": "W/\"231a197d1ef81bc7f66046ef75d12e6a4f2cc12ff83821af450370fa39604fe3\"",
+    "etag": "W/\"191149673f3bea3c6fe1498538c7a7d7c782c740fb1307220dfe7d5749dcf1d8\"",
     "modified": "",
-    "last_entry_id": "https://www.bibliaon.com/animo/",
+    "last_entry_id": "https://www.bibliaon.com/superacao/",
     "https://www.bibliaon.com/planos_de_leitura_da_biblia/": true,
     "https://www.bibliaon.com/salmos_de_gratidao_ao_criador/": true,
     "https://www.bibliaon.com/como_mostrar_sua_gratidao_a_deus/": true,
@@ -98,5 +98,6 @@
     "https://www.bibliaon.com/oracao_da_noite/": true,
     "https://www.bibliaon.com/versiculos_para_comecar_bem_o_dia/": true,
     "https://www.bibliaon.com/paz/": true,
-    "https://www.bibliaon.com/tudo_coopera_para_o_bem_daqueles_que_amam_a_deus/": true
+    "https://www.bibliaon.com/tudo_coopera_para_o_bem_daqueles_que_amam_a_deus/": true,
+    "https://www.bibliaon.com/meu_deus_me_ajuda/": true
 }
