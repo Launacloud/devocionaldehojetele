@@ -23,6 +23,7 @@ def load_cache():
             with open(CACHE_FILE_PATH, 'r') as file:
                 cache = json.load(file)
                 print(f"Cache loaded from file: {CACHE_FILE_PATH}")
+                print("Cache content:", cache)  # Debug: Print cache contents
                 return cache
         except json.JSONDecodeError:
             print("Invalid JSON in cache file. Starting with an empty cache.")
@@ -36,6 +37,7 @@ def save_cache(cache):
     with open(CACHE_FILE_PATH, 'w') as file:
         json.dump(cache, file, indent=4)
     print(f"Cache saved to file: {CACHE_FILE_PATH}")
+    print("Saved cache:", cache)  # Debug: Print saved cache content
 
 # Function to send a message to a Telegram chat
 def send_telegram_message(message):
@@ -45,7 +47,6 @@ def send_telegram_message(message):
     # Split the message if it exceeds the maximum length
     if len(message) > MAX_MESSAGE_LENGTH:
         print(f"Message is too long ({len(message)} characters). Splitting into smaller messages.")
-        # Split into chunks of MAX_MESSAGE_LENGTH characters
         for i in range(0, len(message), MAX_MESSAGE_LENGTH):
             message_chunk = message[i:i+MAX_MESSAGE_LENGTH]
             response = requests.post(
@@ -62,7 +63,6 @@ def send_telegram_message(message):
             if response.status_code != 200:
                 raise Exception(f"Error sending message chunk: {response.text}")
     else:
-        # Send the whole message if it's within the size limit
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
         payload = {
             'chat_id': CHAT_ID,
@@ -93,6 +93,7 @@ def create_feed_checker(feed_url):
             return
 
         feed = feedparser.parse(response.content)
+        print("Feed parsed successfully.")  # Debug: Feed parsing status
 
         if 'etag' in response.headers:
             cache["etag"] = response.headers['etag']
@@ -102,6 +103,7 @@ def create_feed_checker(feed_url):
         new_entries = []
         for entry in feed.entries:
             entry_id = entry.get('id', entry.get('link')).strip()
+            print(f"Checking entry ID: {entry_id}")  # Debug: Print entry ID
             
             # Check if entry_id already exists in the cache
             if entry_id not in cache:
@@ -131,6 +133,7 @@ def create_feed_checker(feed_url):
             message = f"<b>{title}</b>\n<a href='{link}'>{link}</a>\n\n{description_text}"
             
             try:
+                print(f"Sending message: {message}")  # Debug: Print message content
                 send_telegram_message(message)
                 cache[entry_id] = True
                 save_cache(cache)
