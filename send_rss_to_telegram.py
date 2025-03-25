@@ -85,7 +85,7 @@ def create_feed_checker(feed_url):
         cache = load_cache()
 
         headers = {}
-        
+
         # Check if we should bypass the cache check for debugging
         if not BYPASS_CACHE_CHECK:
             if cache["etag"]:
@@ -105,14 +105,14 @@ def create_feed_checker(feed_url):
             cache["etag"] = response.headers['etag']
         if 'last-modified' in response.headers:
             cache["modified"] = response.headers['last-modified']
-        
+
         new_entries = []
         for entry in feed.entries:
             entry_id = entry.get('id', entry.get('link')).strip()
             print(f"Checking entry ID: {entry_id}")  # Debug: Print entry ID
-            
-            # Check if entry_id already exists in the cache
-            if entry_id not in cache:
+
+            # Check if this entry is already processed (by comparing to last_entry_id)
+            if entry_id != cache["last_entry_id"]:
                 new_entries.append(entry)
 
         if not new_entries:
@@ -137,15 +137,16 @@ def create_feed_checker(feed_url):
                 description_text = "No description available."
 
             message = f"<b>{title}</b>\n<a href='{link}'>{link}</a>\n\n{description_text}"
-            
+
             try:
                 print(f"Sending message: {message}")  # Debug: Print message content
                 send_telegram_message(message)
-                cache[entry_id] = True
+                cache[entry_id] = True  # Mark entry as processed in cache
                 save_cache(cache)
             except Exception as e:
                 print(f"Error: {e}")
 
+        # Update the last processed entry ID after all entries are processed
         if new_entries:
             last_entry = new_entries[-1]
             cache["last_entry_id"] = last_entry.get('id', last_entry.get('link')).strip()
