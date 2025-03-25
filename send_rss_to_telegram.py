@@ -16,6 +16,9 @@ if not TELEGRAM_BOT_TOKEN or not RSS_FEED_URL or not CHAT_ID:
 # Cache file path
 CACHE_FILE_PATH = 'feed_cache.json'
 
+# Flag to bypass the etag and last-modified check for debugging
+BYPASS_CACHE_CHECK = True  # Set this to False to enable the cache checks (True)
+
 # Function to load cache from the file
 def load_cache():
     if os.path.exists(CACHE_FILE_PATH):
@@ -80,12 +83,15 @@ def send_telegram_message(message):
 def create_feed_checker(feed_url):
     def check_feed():
         cache = load_cache()
-        
+
         headers = {}
-        if cache["etag"]:
-            headers['If-None-Match'] = cache["etag"]
-        if cache["modified"]:
-            headers['If-Modified-Since'] = cache["modified"]
+        
+        # Check if we should bypass the cache check for debugging
+        if not BYPASS_CACHE_CHECK:
+            if cache["etag"]:
+                headers['If-None-Match'] = cache["etag"]
+            if cache["modified"]:
+                headers['If-Modified-Since'] = cache["modified"]
 
         response = requests.get(feed_url, headers=headers)
         if response.status_code == 304:
