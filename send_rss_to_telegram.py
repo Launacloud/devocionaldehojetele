@@ -3,7 +3,6 @@ import json
 import requests
 import feedparser
 from bs4 import BeautifulSoup
-from time import sleep
 
 # Load environment variables
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -40,18 +39,42 @@ def save_cache(cache):
 
 # Function to send a message to a Telegram chat
 def send_telegram_message(message):
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {
-        'chat_id': CHAT_ID,
-        'text': message,
-        'parse_mode': 'HTML',
-        'disable_web_page_preview': 'false'  # Enable link previews
-    }
-    response = requests.post(url, data=payload)
-    print(f"Response status code: {response.status_code}")
-    print(f"Response text: {response.text}")
-    if response.status_code != 200:
-        raise Exception(f"Error sending message: {response.text}")
+    # Telegram's maximum message length is 4096 characters
+    MAX_MESSAGE_LENGTH = 4096
+    
+    # Split the message if it exceeds the maximum length
+    if len(message) > MAX_MESSAGE_LENGTH:
+        print(f"Message is too long ({len(message)} characters). Splitting into smaller messages.")
+        # Split into chunks of MAX_MESSAGE_LENGTH characters
+        for i in range(0, len(message), MAX_MESSAGE_LENGTH):
+            message_chunk = message[i:i+MAX_MESSAGE_LENGTH]
+            response = requests.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                data={
+                    'chat_id': CHAT_ID,
+                    'text': message_chunk,
+                    'parse_mode': 'HTML',
+                    'disable_web_page_preview': 'false'
+                }
+            )
+            print(f"Response status code for chunk: {response.status_code}")
+            print(f"Response text for chunk: {response.text}")
+            if response.status_code != 200:
+                raise Exception(f"Error sending message chunk: {response.text}")
+    else:
+        # Send the whole message if it's within the size limit
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {
+            'chat_id': CHAT_ID,
+            'text': message,
+            'parse_mode': 'HTML',
+            'disable_web_page_preview': 'false'  # Enable link previews
+        }
+        response = requests.post(url, data=payload)
+        print(f"Response status code: {response.status_code}")
+        print(f"Response text: {response.text}")
+        if response.status_code != 200:
+            raise Exception(f"Error sending message: {response.text}")
 
 # Function to create a feed checker
 def create_feed_checker(feed_url):
