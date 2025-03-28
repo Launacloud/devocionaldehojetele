@@ -17,7 +17,7 @@ if not TELEGRAM_BOT_TOKEN or not RSS_FEED_URL or not CHAT_ID:
 CACHE_FILE_PATH = 'feed_cache.json'
 
 # Flag to bypass the etag and last-modified check for debugging
-BYPASS_CACHE_CHECK = True  # Set this to False to enable the cache checks (True)
+BYPASS_CACHE_CHECK = True  # Set this to False to enable the cache checks
 
 # Function to load cache from the file
 def load_cache():
@@ -26,28 +26,26 @@ def load_cache():
             with open(CACHE_FILE_PATH, 'r') as file:
                 cache = json.load(file)
                 print(f"Cache loaded from file: {CACHE_FILE_PATH}")
-                print("Cache content:", cache)  # Debug: Print cache contents
+                print("Cache content:", cache)
                 return cache
         except json.JSONDecodeError:
             print("Invalid JSON in cache file. Starting with an empty cache.")
-            return {"etag": "", "modified": "", "last_entry_id": ""}
+            return {"etag": "", "modified": "", "first_entry_id": ""}
     else:
         print("No cache file found. Starting with an empty cache.")
-        return {"etag": "", "modified": "", "last_entry_id": ""}
+        return {"etag": "", "modified": "", "first_entry_id": ""}
 
 # Function to save cache to the file
 def save_cache(cache):
     with open(CACHE_FILE_PATH, 'w') as file:
         json.dump(cache, file, indent=4)
     print(f"Cache saved to file: {CACHE_FILE_PATH}")
-    print("Saved cache:", cache)  # Debug: Print saved cache content
+    print("Saved cache:", cache)
 
 # Function to send a message to a Telegram chat
 def send_telegram_message(message):
-    # Telegram's maximum message length is 4096 characters
     MAX_MESSAGE_LENGTH = 4096
     
-    # Split the message if it exceeds the maximum length
     if len(message) > MAX_MESSAGE_LENGTH:
         print(f"Message is too long ({len(message)} characters). Splitting into smaller messages.")
         for i in range(0, len(message), MAX_MESSAGE_LENGTH):
@@ -71,7 +69,7 @@ def send_telegram_message(message):
             'chat_id': CHAT_ID,
             'text': message,
             'parse_mode': 'HTML',
-            'disable_web_page_preview': 'false'  # Enable link previews
+            'disable_web_page_preview': 'false'
         }
         response = requests.post(url, data=payload)
         print(f"Response status code: {response.status_code}")
@@ -85,8 +83,6 @@ def create_feed_checker(feed_url):
         cache = load_cache()
 
         headers = {}
-
-        # Check if we should bypass the cache check for debugging
         if not BYPASS_CACHE_CHECK:
             if cache["etag"]:
                 headers['If-None-Match'] = cache["etag"]
@@ -99,58 +95,52 @@ def create_feed_checker(feed_url):
             return
 
         feed = feedparser.parse(response.content)
-        print("Feed parsed successfully.")  # Debug: Feed parsing status
+        print("Feed parsed successfully.")
+        print(f"Total entries in feed: {len(feed.entries)}")
+
+        if not feed.entries:
+            print("No entries found in the feed.")
+            return
 
         if 'etag' in response.headers:
             cache["etag"] = response.headers['etag']
         if 'last-modified' in response.headers:
             cache["modified"] = response.headers['last-modified']
 
-        new_entries = []
-        for entry in feed.entries:
-            entry_id = entry.get('id', entry.get('link')).strip()
-            print(f"Checking entry ID: {entry_id}")  # Debug: Print entry ID
+        # Get the first entry in the feed
+        first_entry = feed.entries[0]  # First entry (assumed newest)
+        first_entry_id = first_entry.get('id', first_entry.get('link')).strip()
+        print(f"First entry ID: {first_entry_id}")
 
-            # Check if this entry is already processed (by comparing to last_entry_id)
-            if entry_id != cache["last_entry_id"]:
-                new_entries.append(entry)
-
-        if not new_entries:
-            print("No new entries to process.")
+        # Check if this entry has already been processed
+        if first_entry_id == cache.get("first_entry_id", ""):
+            print("First entry already processed. Skipping.")
             return
 
-        for entry in reversed(new_entries):  # Process new entries in reverse order
-            entry_id = entry.get('id', entry.get('link')).strip()
+        # Process the first entry
+        title = first_entry.title
+        link = first_entry.get('link', first_entry.get('url'))
+        description = first_entry.get('content_html', first_entry.get('description', ''))
 
-            title = entry.title
-            link = entry.get('link', entry.get('url'))
-            description = entry.get('content_html', entry.get('description'))
+        if description:
+            soup = BeautifulSoup(description, 'html.parser')
+            supported_tags = ['b', 'i', 'a']
+            for tag in soup.find_all():
+                if tag.name not in supported_tags:
+                    tag.decompose()
+            description_text = soup.prettify()
+        else:
+            description_text = "No description available."
 
-            if description:
-                soup = BeautifulSoup(description, 'html.parser')
-                supported_tags = ['b', 'i', 'a']
-                for tag in soup.find_all():
-                    if tag.name not in supported_tags:
-                        tag.decompose()
-                description_text = soup.prettify()
-            else:
-                description_text = "No description available."
+        message = f"<b>{title}</b>\n<a href='{link}'>{link}</a>\n\n{description_text}"
 
-            message = f"<b>{title}</b>\n<a href='{link}'>{link}</a>\n\n{description_text}"
-
-            try:
-                print(f"Sending message: {message}")  # Debug: Print message content
-                send_telegram_message(message)
-                cache[entry_id] = True  # Mark entry as processed in cache
-                save_cache(cache)
-            except Exception as e:
-                print(f"Error: {e}")
-
-        # Update the last processed entry ID after all entries are processed
-        if new_entries:
-            last_entry = new_entries[-1]
-            cache["last_entry_id"] = last_entry.get('id', last_entry.get('link')).strip()
+        try:
+            print(f"Sending message for first entry: {message}")
+            send_telegram_message(message)
+            cache["first_entry_id"] = first_entry_id  # Store the first entry's ID
             save_cache(cache)
+        except Exception as e:
+            print(f"Error: {e}")
 
     return check_feed
 
